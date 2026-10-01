@@ -1,15 +1,16 @@
 import requests
 import json
 
-url = "https://olinda.bcb.gov.br/olinda/servico/Pix_DadosAbertos/versao/v1/odata/TransacoesPixPorMunicipio(DataBase=@DataBase)?@DataBase='20201'"
+TIMEOUT = 120
 
-def get_dataframe(n_ultimos = 10000):
+def get_data(url, n_ultimos = 10000, tentativas: int = 3):
     params = {
         '$top': n_ultimos
     }
-
-    request = requests.get(url, params=params)
-    with open('pix_dados.json', 'w') as f:
-        json.dump(request.json()['value'], f, ensure_ascii=False)
-
-get_dataframe(url, 10000)
+    for i in range(tentativas):
+        try: 
+            request = requests.get(url, params=params, timeout=TIMEOUT)
+            request.raise_for_status()
+            return request.json()
+        except requests.RequestException as e:
+            print(f"Tentativa {i} falhou: {e}")
