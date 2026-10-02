@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 def exibir_total(x):
     if x >= 10**6 and x < 10**9:
