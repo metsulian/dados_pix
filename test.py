@@ -5,7 +5,7 @@ from src.config import API_URL
 
 DB_CONNECTION = "postgresql+psycopg2://app:app_pass@localhost:3000/appdb"
 
-data = get_data(API_URL)
+data = get_data(API_URL, n_ultimos=10000)
 engine = _get_engine(DB_CONNECTION)
 print(clean_database(engine))
 print(upload_sql(engine, data))
