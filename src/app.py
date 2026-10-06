@@ -108,7 +108,7 @@ with aba_silver:
             st.metric("Total Pago por PJ", "Nao Obtido")
 
         if vl_pag_medio:
-            st.metric("Valor Medio Pagamento", f"{vl_pag_medio:.2f} Reais")
+            st.metric("Valor Medio Pagamento", show_values(vl_pag_medio))
         else:
             st.metric("Valor Medio Pagamento", "Nao Obtido")
         
@@ -156,9 +156,9 @@ with aba_gold_estados:
                     st.metric(f"Balanco Estadual em {ano_mes}", "Nao Obtido")
 
                 if var_mes_estado:
-                    st.metric(f"Variacao em Relacao ao Ultimo Mes", f"{(var_mes_estado*100):.2f}%")
+                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"{(var_mes_estado*100):.2f}%")
                 else:
-                    st.metric(f"Variacao em Relacao ao Ultimo Mes", f"Nao Obtida")
+                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"Nao Obtida")
 
                 make_series([
                     {"Valor_Pagador_Total": r["VL_Pagador_Total_Estado"],
@@ -180,9 +180,9 @@ with aba_gold_estados:
                     st.metric(f"Share Nacional em {ano_mes}", "Nao Obtido")
 
                 if var_ano_anterior_estado:
-                    st.metric(f"Variacao em Relacao ao Mesmo Mes do ultimo Ano", f"{(var_ano_anterior_estado*100):.2f}%")
+                    st.metric(f"Variacao do Balanco em Relacao ao Mesmo Mes do Ano Anterior", f"{(var_ano_anterior_estado*100):.2f}%")
                 else:
-                    st.metric(f"Variacao em Relacao ao Mesmo Mes do ultimo Ano", f"Nao Obtida")
+                    st.metric(f"Variacao do Balanco em Relacao ao Mesmo Mes do Ano Anterior", f"Nao Obtida")
 
                 make_series([
                     {"Share Nacional": r["Share_Nacional_Estado"],
@@ -213,7 +213,6 @@ with aba_gold_municipios:
             pct_pj = gold_municipio_data["Pct_PJ_Pagador_Municipio"]
             share_nacional_municipio = gold_municipio_data["Share_Nacional_Municipio"]
             share_estadual_municipio = gold_municipio_data["Share_Estadual_Municipio"]
-            var_ano_anterior_municipio = gold_municipio_data["Var_AMA_Municipio"]
             with col5:
                 if vl_total_municipio:
                     st.metric(f"Valor Total Pago", show_values(vl_total_municipio))
@@ -226,9 +225,9 @@ with aba_gold_municipios:
                     st.metric(f"Balanco minicipal em {ano_mes}", "Nao Obtido")
 
                 if var_mes_anterior_municipio:
-                    st.metric(f"Variacao em Relacao ao Ultimo Mes", f"{(var_mes_anterior_municipio):.2f}%")
+                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"{(var_mes_anterior_municipio):.2f}%")
                 else:
-                    st.metric(f"Variacao em Relacao ao Ultimo Mes", "Nao Obtida")
+                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", "Nao Obtida")
                 
                 make_series([
                     {"Valor_Pagador_Total": r["VL_Pagador_Total_Municipio"],
@@ -238,6 +237,10 @@ with aba_gold_municipios:
                     {"Balanco": r["Balanco_Municipio"],
                     "Data": r["AnoMes"]
                     } for r in gold_municipio_series], f"Serie Historica Balanco - {municipio}")
+                make_series([
+                    {"Share Estadual": r["Pct_PJ_Pagador_Municipio"],
+                    "Data": r["AnoMes"]
+                    } for r in gold_municipio_series], f"Serie Historica Participacao PJ - {municipio}")
 
             with col6:
                 if pct_pj:
@@ -251,14 +254,9 @@ with aba_gold_municipios:
                     st.metric(f"Share Nacional em {ano_mes}", "Nao Obtido")
 
                 if share_estadual_municipio:
-                    st.metric(f"Share Nacional em {ano_mes}", f"{(share_estadual_municipio*100):.2f}%")
+                    st.metric(f"Share Estadual em {ano_mes}", f"{(share_estadual_municipio*100):.2f}%")
                 else:
-                    st.metric(f"Share Nacional em {ano_mes}", "Nao Obtido")
-
-                if var_ano_anterior_municipio:
-                    st.metric(f"Variacao em Relacao ao Mesmo Mes do ultimo Ano", f"{(var_ano_anterior_municipio*100):.2f}%")
-                else:
-                    st.metric(f"Variacao em Relacao ao Mesmo Mes do ultimo Ano", "Nao Obtida")
+                    st.metric(f"Share Estadual em {ano_mes}", "Nao Obtido")
 
                 make_series([
                     {"Share Nacional": r["Share_Nacional_Municipio"],
@@ -268,7 +266,3 @@ with aba_gold_municipios:
                     {"Share Estadual": r["Share_Estadual_Municipio"],
                     "Data": r["AnoMes"]
                     } for r in gold_municipio_series], f"Serie Historica Share Estadual - {municipio}")
-                make_series([
-                    {"Share Estadual": r["Pct_PJ_Pagador_Municipio"],
-                    "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Participacao PJ - {municipio}")

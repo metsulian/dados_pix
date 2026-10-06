@@ -9,7 +9,7 @@ import logging
 import requests
 import time
 
-logger = logging.getLogger("api")
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 120
 

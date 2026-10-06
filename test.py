@@ -1,5 +1,5 @@
 from src.utils.api_requests import get_sequential_and_upload
-from src.utils.database import clean_database, upload_sql, _get_engine, run_query, setup_tables
+from src.utils.database import clean_database, _get_engine, run_query, setup_tables
 
 from src.config import API_URL, DB_CONNECTION
 

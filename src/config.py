@@ -1,2 +1,8 @@
-API_URL="https://olinda.bcb.gov.br/olinda/servico/Pix_DadosAbertos/versao/v1/odata/TransacoesPixPorMunicipio(DataBase=@DataBase)"
-DB_CONNECTION = "postgresql+psycopg2://app:app_pass@localhost:3000/appdb"
+import os
+
+API_URL = "https://olinda.bcb.gov.br/olinda/servico/Pix_DadosAbertos/versao/v1/odata/TransacoesPixPorMunicipio(DataBase=@DataBase)"
+
+DB_CONNECTION = os.getenv(
+    "DB_CONNECTION",
+    "postgresql+psycopg2://app:app_pass@localhost:3000/appdb",
+)

@@ -5,6 +5,10 @@ from sqlalchemy.engine import Engine
 from src.models.models import Base, DadosAPI
 from src.utils.preprocessing import prepare_data
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Cria engine
 def _get_engine(connection_string: str) -> Engine:
     return create_engine(connection_string)
@@ -12,19 +16,22 @@ def _get_engine(connection_string: str) -> Engine:
 # Upa os dados da API no banco de dados
 def upload_sql(engine: Engine, data):
     Base.metadata.create_all(engine)
+    logger.info("Iniciando o Upload para o Banco de Dados")
 
     data = prepare_data(data)
     with engine.begin() as conn:
         conn.execute(insert(DadosAPI), data)
 
-    print(f"{len(data)} registro(s) salvo(s)")
+    logger.info(f"{len(data)} registro(s) salvo(s)")
 
 # Limpa o banco de dados
 def clean_database(engine: Engine):
+    logger.info("Iniciando Limpeza do Banco de Dados")
     with engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):
             conn.execute(text(f'DROP TABLE IF EXISTS "{table.name}" CASCADE'))
     Base.metadata.create_all(engine)
+    logger.info("Banco de Dados Limpo")
 
 # Executa query no database
 def run_query(
@@ -243,9 +250,10 @@ def setup_tables(
         WINDOW w AS (PARTITION BY "Estado", "Municipio" ORDER BY "AnoMes");
     """
 
+    logger.info("Inicializando Tabelas...")
     result_silver = run_query(engine, silver_query)
     result_gold_estados = run_query(engine, query_gold_estados)
     result_gold_municipios = run_query(engine, query_gold_municipios)
-
+    logger.info("Tabelas Inicializadas")
 
     return result_silver, result_gold_estados, result_gold_municipios
