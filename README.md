@@ -36,7 +36,7 @@ O banco fica disponível em `localhost:3000` (porta 5432 do container). Por padr
 - Senha: `app_pass`
 - Banco: `appdb`
 
-Por padrao, o banco eh carregador com dados dos ultimos 4 anos. Essa configuracao pode ser alterada em src/load_database.py mudando o valor de n_meses.
+Por padrao, o banco eh carregado com dados dos ultimos 4 anos. Essa configuracao pode ser alterada em src/load_database.py mudando o valor de n_meses.
 
 ### 2. Criar o ambiente virtual e instalar dependências
 
