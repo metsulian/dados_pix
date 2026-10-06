@@ -1,3 +1,4 @@
+from sqlalchemy import TextClause
 from sqlalchemy import create_engine, insert, text
 from sqlalchemy.engine import Engine
 
@@ -28,10 +29,11 @@ def clean_database(engine: Engine):
 # Executa query no database
 def run_query(
     engine: Engine,
-    query:str,
+    query:str | TextClause,
+    params: dict | None = None
 ):
     with engine.begin() as conn:
-        resultado = conn.execute(text(query))
+        resultado = conn.execute(text(query), params or {})
         if resultado.returns_rows:
             return [dict(linha) for linha in resultado.mappings()]
         return resultado.rowcount
@@ -149,7 +151,7 @@ def setup_tables(
             vl_rec / NULLIF(qt_rec, 0),
             balanco,
             vl_pag_pj / NULLIF(vl_pag, 0),
-            vl_rec_pj / NULLIF(vl_rec_pj, 0),
+            vl_rec_pj / NULLIF(vl_rec, 0),
             vl_rec / NULLIF(vl_pag, 0),
             vl_pag / NULLIF(pes_pag, 0),
             vl_rec / NULLIF(pes_rec, 0),
