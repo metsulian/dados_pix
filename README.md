@@ -1,6 +1,6 @@
 # Dados PIX
 
-Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard:
+Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard. O banco de dados segue esta arquitetura:
 
 | Camada | Tabelas                                 | Conteúdo                                                                  |
 | --------| -----------------------------------------| ---------------------------------------------------------------------------|
@@ -47,6 +47,8 @@ pip install -r requirements.txt
 ```
 
 ### 3. Iniciar o dashboard
+
+Espere o dowload dos dados terminar e rode:
 
 ```bash
 python -m streamlit run src/app.py
