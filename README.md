@@ -1,8 +1,8 @@
 # Dados PIX
 
-Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard e possuem informacoes dos ultimos 5 anos.
+Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard e possuem informações dos últimos 5 anos.
 
-O banco possui mais dados do que foram exibidos. Os modelos de cada tabela sao exibidos na secao de estrutura.
+O banco possui mais dados do que foram exibidos. Os modelos de cada tabela são exibidos na seção de estrutura.
 
 ## Dashboard
 
