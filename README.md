@@ -1,12 +1,36 @@
 # Dados PIX
 
-Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard. O banco de dados segue esta arquitetura:
+Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard.
 
-| Camada | Tabelas                                 | Conteúdo                                                                  |
-| --------| -----------------------------------------| ---------------------------------------------------------------------------|
-| Bronze | `DadosAPI`                              | Dados brutos da API (um registro por município/mês)                       |
-| Silver | `DadosSilver`                           | Indicadores calculados linha a linha (totais, tickets médios, proporções) |
-| Gold   | `DadosEstadoGold`, `DadosMunicipioGold` | Dados agregados, shares e variações temporais para o dashboard            |
+## Dashboard
+
+### 📈 Visão Geral
+
+Indicadores gerais por estado. Exibe o total pago, total recebido, quantidade de PF e PJ ativas, entre outros. Também exibe gráficos comparativos de pagamento e recebimento PF vs PJ e ranking de municípios por total pago, balanço e total pago por PF e PJ.
+
+<p align="center">
+  <img src="assets/visao_geral1.png" width="48%" height="400" alt="Visão Geral 1">
+  <img src="assets/visao_geral2.png" width="48%" height="400" alt="Visão Geral 2">
+</p>
+
+### 🗺️ Análise Estadual
+
+Indicadores temporais por estado. Exibe, para um determinado mês, o total pago, participação de PJ, share nacional e variações de balanço. Os gráficos contemplam séries históricas para o total pago, share nacional, balanço e participação PJ.
+
+<p align="center">
+  <img src="assets/estadual1.png" width="48%" height="400" alt="Estadual 1">
+  <img src="assets/estadual2.png" width="48%" height="400" alt="Estadual 2">
+</p>
+
+### 🏙️ Análise Municipal
+
+Indicadores temporais por município. Exibe o total pago, participação PJ, variação mensal do balanço, share nacional e estadual. Os gráficos contemplam séries históricas para o total pago, share nacional e estadual e balanço.
+
+<p align="center">
+  <img src="assets/municipal1.png" width="48%" height="400" alt="Municipal 1">
+  <img src="assets/municipal2.png" width="48%" height="400" alt="Municipal 2">
+</p>
+
 
 ## Estrutura
 
@@ -21,6 +45,14 @@ src/
 docker-compose.yml
 Dockerfile
 ```
+
+O banco de dados segue a seguinte arquitetura:
+
+| Camada | Tabelas                                 | Conteúdo                                                                  |
+| --------| -----------------------------------------| ---------------------------------------------------------------------------|
+| Bronze | `DadosAPI`                              | Dados brutos da API (um registro por município/mês)                       |
+| Silver | `DadosSilver`                           | Indicadores calculados linha a linha (totais, tickets médios, proporções) |
+| Gold   | `DadosEstadoGold`, `DadosMunicipioGold` | Dados agregados, shares e variações temporais para o dashboard            |
 
 ## Uso -> Banco no Docker, aplicação local
 

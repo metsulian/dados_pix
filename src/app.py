@@ -9,7 +9,7 @@ from src.config import DB_CONNECTION
 engine = _get_engine(DB_CONNECTION)
 
 st.set_page_config(layout="wide")
-st.title('📊 Estatísticas e Indicadores do Pix Por Municipio')
+st.title('📊 Estatísticas e Indicadores do Pix por Município')
 
 estados = [r["Estado"] for r in get_estados(engine)]
 estados.insert(0, "TODOS")
@@ -20,19 +20,20 @@ if estado == "TODOS":
 else:
     municipios = [r["Municipio"] for r in get_municipios(engine, estado)]
     municipios.insert(0, "TODOS")
-municipio = st.selectbox("Selecione um Municipio:", municipios)
+municipio = st.selectbox("Selecione um Município:", municipios)
 
 meses = [r["AnoMes"] for r in get_ano_mes(engine)]
 meses.reverse()
-ano_mes = st.selectbox("Selecione um mes:", meses)
 
-aba_silver, aba_gold_estados, aba_gold_municipios = st.tabs([
-    "📈 Visão Geral", 
-    "🗺️ Análise Estadual", 
-    "🗺️ Análise Municipal"
-])
+aba = st.radio(
+    "Seção",
+    ["📈 Visão Geral", "🗺️ Análise Estadual", "🏙️ Análise Municipal"],
+    horizontal=True,
+    key="aba_ativa",
+    label_visibility="collapsed",
+)
 
-with aba_silver:    
+if aba == "📈 Visão Geral":    
     silver_data = get_silver(engine, estado=estado, municipio=municipio)[0]
     top_pag = get_top_pag(engine, estado)
     top_bal = get_top_bal(engine, estado)
@@ -60,27 +61,27 @@ with aba_silver:
         if vl_total:
             st.metric("Total pago:", show_values(vl_total))
         else: 
-            st.metric("Total pago:", "Nao Obtido")
+            st.metric("Total pago:", "Não Obtido")
 
         if qt_pagamentos:
             st.metric("Quantidade de Pagamentos:", show_values(qt_pagamentos))
         else:
-            st.metric("Quantidade de Pagamentos", "Nao Obtida")
+            st.metric("Quantidade de Pagamentos:", "Não Obtida")
 
         if total_pf:
             st.metric("Total Pago por PF:", show_values(total_pf))
         else:
-            st.metric("Total Pago por PF:", "Nao Obtido")
+            st.metric("Total Pago por PF:", "Não Obtido")
 
         if balanco:
-            st.metric("Balanco:", show_values(balanco))
+            st.metric("Balanço:", show_values(balanco))
         else:
-            st.metric("Balanco:", "Balanco")
+            st.metric("Balanço:", "Não Obtido")
         
         if qt_pf_ativos:
             st.metric("Quantidade de PF Ativas:", show_values(qt_pf_ativos))
         else:
-            st.metric("Quantidade de PF Ativas:", "Nao Obtida")
+            st.metric("Quantidade de PF Ativas:", "Não Obtida")
 
         if pct_pag_pj and pct_pag_pf:
             make_pie(
@@ -89,33 +90,33 @@ with aba_silver:
                 f"Distribuição de Pagamentos (PF vs PJ) - {estado}"
             )
         
-        make_top_bar(top_pag, title=f"Top 10 Municipios - Valor Pago Total - {estado}", y_label="Valor Pago")
-        make_top_bar(top_pf, title=f"Top 10 Municipios - Valor Pago por PF - {estado}", y_label="Valor Pago")
+        make_top_bar(top_pag, title=f"Top 10 Municípios - Valor Pago Total - {estado}", y_label="Valor Pago")
+        make_top_bar(top_pf, title=f"Top 10 Municípios - Valor Pago por PF - {estado}", y_label="Valor Pago")
     with col2:
         if rec_total:
             st.metric("Total recebido:", show_values(rec_total))
         else:
-            st.metric("Total recebido:", "Nao Obtido")
+            st.metric("Total recebido:", "Não Obtido")
 
         if qt_rec:
             st.metric("Quantidade de Recebimentos:", show_values(qt_rec))
         else:
-            st.metric("Quantidade de Recebimentos", "Nao Obtida")
+            st.metric("Quantidade de Recebimentos:", "Não Obtida")
 
         if total_pj:
-            st.metric("Total Pago por PJ", show_values(total_pj))
+            st.metric("Total Pago por PJ:", show_values(total_pj))
         else:
-            st.metric("Total Pago por PJ", "Nao Obtido")
+            st.metric("Total Pago por PJ:", "Não Obtido")
 
         if vl_pag_medio:
-            st.metric("Valor Medio Pagamento", show_values(vl_pag_medio))
+            st.metric("Valor Médio de Pagamento:", show_values(vl_pag_medio))
         else:
-            st.metric("Valor Medio Pagamento", "Nao Obtido")
+            st.metric("Valor Médio de Pagamento:", "Não Obtido")
         
         if qt_pj_ativos:
             st.metric("Quantidade de PJ Ativas:", show_values(qt_pj_ativos))
         else:
-            st.metric("Quantidade de PJ Ativas", "Nao Obtido")
+            st.metric("Quantidade de PJ Ativas:", "Não Obtida")
 
         if pct_rec_pf and pct_rec_pj:
             make_pie(
@@ -124,17 +125,23 @@ with aba_silver:
                 f"Distribuição de Recebimentos (PF vs PJ) - {estado}"
             )
 
-        make_top_bar(top_bal, title=f"Top 10 Municipios Por Balanco - {estado}", y_label="Balanco")
-        make_top_bar(top_pj,  title=f"Top 10 Municipios por Valor Pago Por PJ - {estado}", y_label="Valor Pago")
+        make_top_bar(top_bal, title=f"Top 10 Municípios por Balanço - {estado}", y_label="Balanço")
+        make_top_bar(top_pj,  title=f"Top 10 Municípios por Valor Pago por PJ - {estado}", y_label="Valor Pago")
 
-with aba_gold_estados:
+elif aba == "🗺️ Análise Estadual":
+    ano_mes_estado = st.selectbox(
+        "Selecione um mês:", 
+        meses, 
+        key="mes_estado",
+        format_func=lambda d: d.strftime("%Y-%m")
+    )
     if estado == 'TODOS':
         st.warning("Selecione um estado!")
     else:
-        if not get_gold_estados(engine, estado, ano_mes):
-            st.warning(f"Dados Nao Obtidos para {estado} - {ano_mes}")
+        if not get_gold_estados(engine, estado, ano_mes_estado):
+            st.warning(f"Dados Não Obtidos para {estado} - {ano_mes_estado}")
         else:
-            gold_estado_data = get_gold_estados(engine, estado, ano_mes)[0]
+            gold_estado_data = get_gold_estados(engine, estado, ano_mes_estado)[0]
             gold_estado_series = get_gold_estados_series(engine, estado)
             col3, col4 = st.columns(2)
 
@@ -146,63 +153,69 @@ with aba_gold_estados:
             var_ano_anterior_estado = gold_estado_data["Var_AMA_Estado"]
             with col3:
                 if vl_total_estado:
-                    st.metric(f"Valor Total Pago", show_values(vl_total_estado))
+                    st.metric("Valor Total Pago", show_values(vl_total_estado))
                 else:
-                    st.metric("Valor Total Pago", "Nao Obtido")
+                    st.metric("Valor Total Pago", "Não Obtido")
                 
                 if balanco_estado:
-                    st.metric(f"Balanco estadual em {ano_mes}", show_values(balanco_estado))
+                    st.metric(f"Balanço Estadual em {ano_mes_estado}", show_values(balanco_estado))
                 else:
-                    st.metric(f"Balanco Estadual em {ano_mes}", "Nao Obtido")
+                    st.metric(f"Balanço Estadual em {ano_mes_estado}", "Não Obtido")
 
                 if var_mes_estado:
-                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"{(var_mes_estado*100):.2f}%")
+                    st.metric("Variação do Balanço em Relação ao Último Mês", f"{(var_mes_estado*100):.2f}%")
                 else:
-                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"Nao Obtida")
+                    st.metric("Variação do Balanço em Relação ao Último Mês", "Não Obtida")
 
                 make_series([
                     {"Valor_Pagador_Total": r["VL_Pagador_Total_Estado"],
                     "Data": r["AnoMes"]
-                    } for r in gold_estado_series], f"Serie Historica Total Pago - {estado}")
+                    } for r in gold_estado_series], f"Série Histórica Total Pago - {estado}")
                 make_series([
                     {"Balanco": r["Balanco_Estado"],
                     "Data": r["AnoMes"]
-                    } for r in gold_estado_series], f"Serie Historica Balanco - {estado}")
+                    } for r in gold_estado_series], f"Série Histórica Balanço - {estado}")
             with col4:
                 if pct_pj_estado:
-                    st.metric(f"Porcentagem do Valor Pago PJ", f"{(pct_pj_estado*100):.2f}%")
+                    st.metric("Porcentagem do Valor Pago PJ", f"{(pct_pj_estado*100):.2f}%")
                 else:
-                    st.metric("Porcentagem do Valor Pago PJ", "Nao Obtida")
+                    st.metric("Porcentagem do Valor Pago PJ", "Não Obtida")
 
                 if share_nacional_estado:
-                    st.metric(f"Share Nacional em {ano_mes}", f"{(share_nacional_estado*100):.2f}%")
+                    st.metric(f"Share Nacional em {ano_mes_estado}", f"{(share_nacional_estado*100):.2f}%")
                 else:
-                    st.metric(f"Share Nacional em {ano_mes}", "Nao Obtido")
+                    st.metric(f"Share Nacional em {ano_mes_estado}", "Não Obtido")
 
                 if var_ano_anterior_estado:
-                    st.metric(f"Variacao do Balanco em Relacao ao Mesmo Mes do Ano Anterior", f"{(var_ano_anterior_estado*100):.2f}%")
+                    st.metric("Variação do Balanço em Relação ao Mesmo Mês do Ano Anterior", f"{(var_ano_anterior_estado*100):.2f}%")
                 else:
-                    st.metric(f"Variacao do Balanco em Relacao ao Mesmo Mes do Ano Anterior", f"Nao Obtida")
+                    st.metric("Variação do Balanço em Relação ao Mesmo Mês do Ano Anterior", "Não Obtida")
 
                 make_series([
                     {"Share Nacional": r["Share_Nacional_Estado"],
                     "Data": r["AnoMes"]
-                    } for r in gold_estado_series], f"Serie Historica Share Nacional - {estado}")
+                    } for r in gold_estado_series], f"Série Histórica Share Nacional - {estado}")
                 make_series([
                     {"% PJ": r["Pct_PJ_Pagador_Estado"],
                     "Data": r["AnoMes"]
-                    } for r in gold_estado_series], f"Serie Historica Participacao PJ - {estado}")
+                    } for r in gold_estado_series], f"Série Histórica Participação PJ - {estado}")
 
-with aba_gold_municipios:
+elif aba == "🏙️ Análise Municipal":
+    ano_mes_municipio = st.selectbox(
+        "Selecione um mês:", 
+        meses, 
+        key="mes_municipio",
+        format_func=lambda d: d.strftime("%Y-%m")
+    )
     if estado == 'TODOS':
         st.warning("Selecione um estado!")
     if municipio == "TODOS":
-        st.warning("Selecione um municipio!")
+        st.warning("Selecione um município!")
     else:
-        gold_municipio_data = get_gold_municipios(engine, estado, municipio, ano_mes)
+        gold_municipio_data = get_gold_municipios(engine, estado, municipio, ano_mes_municipio)
         gold_municipio_series = get_gold_municipios_series(engine, estado, municipio)
         if not gold_municipio_data:
-            st.warning("Sem dados para esse município neste mês.")
+            st.warning("Sem dados para este município neste mês.")
         else:
             gold_municipio_data = gold_municipio_data[0]
             col5, col6 = st.columns(2)
@@ -215,54 +228,54 @@ with aba_gold_municipios:
             share_estadual_municipio = gold_municipio_data["Share_Estadual_Municipio"]
             with col5:
                 if vl_total_municipio:
-                    st.metric(f"Valor Total Pago", show_values(vl_total_municipio))
+                    st.metric("Valor Total Pago", show_values(vl_total_municipio))
                 else:
-                    st.metric(f"Valor Total Pago", "Nao Obtido")
+                    st.metric("Valor Total Pago", "Não Obtido")
 
                 if balanco_municipio:
-                    st.metric(f"Balanco minicipal em {ano_mes}", show_values(balanco_municipio))
+                    st.metric(f"Balanço Municipal em {ano_mes_municipio}", show_values(balanco_municipio))
                 else:
-                    st.metric(f"Balanco minicipal em {ano_mes}", "Nao Obtido")
+                    st.metric(f"Balanço Municipal em {ano_mes_municipio}", "Não Obtido")
 
                 if var_mes_anterior_municipio:
-                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", f"{(var_mes_anterior_municipio):.2f}%")
+                    st.metric("Variação do Balanço em Relação ao Último Mês", f"{(var_mes_anterior_municipio):.2f}%")
                 else:
-                    st.metric(f"Variacao do Balanco em Relacao ao Ultimo Mes", "Nao Obtida")
+                    st.metric("Variação do Balanço em Relação ao Último Mês", "Não Obtida")
                 
                 make_series([
                     {"Valor_Pagador_Total": r["VL_Pagador_Total_Municipio"],
                     "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Total Pago - {municipio}")
+                    } for r in gold_municipio_series], f"Série Histórica Total Pago - {municipio}")
                 make_series([
                     {"Balanco": r["Balanco_Municipio"],
                     "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Balanco - {municipio}")
+                    } for r in gold_municipio_series], f"Série Histórica Balanço - {municipio}")
                 make_series([
                     {"Share Estadual": r["Pct_PJ_Pagador_Municipio"],
                     "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Participacao PJ - {municipio}")
+                    } for r in gold_municipio_series], f"Série Histórica Participação PJ - {municipio}")
 
             with col6:
                 if pct_pj:
-                    st.metric(f"Porcentagem do Valor Pago PJ", f"{(pct_pj*100):.2f}%")
+                    st.metric("Porcentagem do Valor Pago PJ", f"{(pct_pj*100):.2f}%")
                 else: 
-                    st.metric(f"Porcentagem do Valor Pago PJ", "Nao Obtida")
+                    st.metric("Porcentagem do Valor Pago PJ", "Não Obtida")
 
                 if share_nacional_municipio:
-                    st.metric(f"Share Nacional em {ano_mes}", f"{(share_nacional_municipio*100):.2f}%")
+                    st.metric(f"Share Nacional em {ano_mes_municipio}", f"{(share_nacional_municipio*100):.2f}%")
                 else:
-                    st.metric(f"Share Nacional em {ano_mes}", "Nao Obtido")
+                    st.metric(f"Share Nacional em {ano_mes_municipio}", "Não Obtido")
 
                 if share_estadual_municipio:
-                    st.metric(f"Share Estadual em {ano_mes}", f"{(share_estadual_municipio*100):.2f}%")
+                    st.metric(f"Share Estadual em {ano_mes_municipio}", f"{(share_estadual_municipio*100):.2f}%")
                 else:
-                    st.metric(f"Share Estadual em {ano_mes}", "Nao Obtido")
+                    st.metric(f"Share Estadual em {ano_mes_municipio}", "Não Obtido")
 
                 make_series([
                     {"Share Nacional": r["Share_Nacional_Municipio"],
                     "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Share Nacional - {municipio}")
+                    } for r in gold_municipio_series], f"Série Histórica Share Nacional - {municipio}")
                 make_series([
                     {"Share Estadual": r["Share_Estadual_Municipio"],
                     "Data": r["AnoMes"]
-                    } for r in gold_municipio_series], f"Serie Historica Share Estadual - {municipio}")
+                    } for r in gold_municipio_series], f"Série Histórica Share Estadual - {municipio}")
