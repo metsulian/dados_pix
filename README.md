@@ -1,6 +1,8 @@
 # Dados PIX
 
-Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard.
+Dashboard em Streamlit com estatísticas do Pix por município, usando a API de dados abertos do Banco Central. Os dados foram armazenados em PostgreSQL e integrados com o dashboard e possuem informacoes dos ultimos 5 anos.
+
+O banco possui mais dados do que foram exibidos. Os modelos de cada tabela sao exibidos na secao de estrutura.
 
 ## Dashboard
 
@@ -31,7 +33,6 @@ Indicadores temporais por município. Exibe o total pago, participação PJ, var
   <img src="assets/municipal2.png" width="48%" height="400" alt="Municipal 2">
 </p>
 
-
 ## Estrutura
 
 ```
@@ -53,6 +54,16 @@ O banco de dados segue a seguinte arquitetura:
 | Bronze | `DadosAPI`                              | Dados brutos da API (um registro por município/mês)                       |
 | Silver | `DadosSilver`                           | Indicadores calculados linha a linha (totais, tickets médios, proporções) |
 | Gold   | `DadosEstadoGold`, `DadosMunicipioGold` | Dados agregados, shares e variações temporais para o dashboard            |
+
+Modelos das tabelas:
+
+| Dados API (Bronze) | Tabela Silver |
+|:-----------:|:----------------:|
+| <img src="assets/modelo1.png" width="500"> | <img src="assets/modelo2.png" width="500"> |
+
+| Tabela Gold Estadual | Tabela Gold Municipal |
+|:-----------------:|:---------:|
+| <img src="assets/modelo3.png" width="500"> | <img src="assets/modelo4.png" width="500"> |
 
 ## Uso -> Banco no Docker, aplicação local
 
