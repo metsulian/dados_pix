@@ -4,6 +4,8 @@ Dashboard em Streamlit com estatísticas do Pix por município, usando a API de 
 
 O banco possui mais dados do que foram exibidos. Os modelos de cada tabela são exibidos na seção de estrutura.
 
+A diferença entre os valores de pagamento e de recebimento decorre de motivos relacionados à API do BCB.
+
 ## Dashboard
 
 ### 📈 Visão Geral
