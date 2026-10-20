@@ -34,6 +34,7 @@ class DadosSilver(Base):
     __tablename__ = "DadosSilver"
 
     id: Mapped[int] = mapped_column(ForeignKey("DadosAPI.id"), primary_key=True)
+    AnoMes: Mapped[date]
     VL_PagadorTotal: Mapped[float | None]
     QT_PagadorTotal: Mapped[int | None]
     VL_RecebedorTotal: Mapped[float | None]

@@ -79,9 +79,9 @@ if aba == "📈 Visão Geral":
             st.metric("Balanço:", "Não Obtido")
         
         if qt_pf_ativos:
-            st.metric("Quantidade de PF Ativas:", show_values(qt_pf_ativos))
+            st.metric("Quantidade de Pagamentos PF:", show_values(qt_pf_ativos))
         else:
-            st.metric("Quantidade de PF Ativas:", "Não Obtida")
+            st.metric("Quantidade de Pagamentos PF:", "Não Obtida")
 
         if pct_pag_pj and pct_pag_pf:
             make_pie(
@@ -114,9 +114,9 @@ if aba == "📈 Visão Geral":
             st.metric("Valor Médio de Pagamento:", "Não Obtido")
         
         if qt_pj_ativos:
-            st.metric("Quantidade de PJ Ativas:", show_values(qt_pj_ativos))
+            st.metric("Quantidade de Pagamentos PJ:", show_values(qt_pj_ativos))
         else:
-            st.metric("Quantidade de PJ Ativas:", "Não Obtida")
+            st.metric("Quantidade de Pagamentos PJ:", "Não Obtida")
 
         if pct_rec_pf and pct_rec_pj:
             make_pie(

@@ -54,6 +54,7 @@ def setup_tables(
     silver_query = """
         INSERT INTO "DadosSilver" (
             "id",
+            "AnoMes",
             "VL_PagadorTotal",
             "QT_PagadorTotal",
             "VL_RecebedorTotal",
@@ -75,6 +76,7 @@ def setup_tables(
         )
         SELECT
             "id",
+            "AnoMes",
             "VL_PagadorPF" + "VL_PagadorPJ",
             "QT_PagadorPF" + "QT_PagadorPJ",
             "VL_RecebedorPF" + "VL_RecebedorPJ",
