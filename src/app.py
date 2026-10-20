@@ -1,5 +1,5 @@
 from src.queries.queries import get_top_pj,get_top_pf, get_top_bal, get_top_pag, get_municipios, get_estados, get_silver, get_gold_estados_series, get_gold_municipios_series, get_gold_municipios, get_gold_estados, get_ano_mes
-from src.utils.graphs import make_pie, make_top_bar, make_series
+from src.utils.graphs import make_pie, make_top_bar, make_series, apply_theme
 from src.utils.database import _get_engine
 from src.utils.preprocessing import show_values
 import streamlit as st
@@ -10,6 +10,7 @@ engine = _get_engine(DB_CONNECTION)
 
 st.set_page_config(layout="wide")
 st.title('📊 Estatísticas e Indicadores do Pix por Município')
+apply_theme()
 
 estados = [r["Estado"] for r in get_estados(engine)]
 estados.insert(0, "TODOS")
@@ -25,13 +26,15 @@ municipio = st.selectbox("Selecione um Município:", municipios)
 meses = [r["AnoMes"] for r in get_ano_mes(engine)]
 meses.reverse()
 
-aba = st.radio(
-    "Seção",
-    ["📈 Visão Geral", "🗺️ Análise Estadual", "🏙️ Análise Municipal"],
-    horizontal=True,
-    key="aba_ativa",
-    label_visibility="collapsed",
-)
+with st.sidebar:
+    st.text("Selecione:")
+    aba = st.radio(
+        "Seção",
+        ["📈 Visão Geral", "🗺️ Análise Estadual", "🏙️ Análise Municipal"],
+        horizontal=True,
+        key="aba_ativa",
+        label_visibility="collapsed",
+    )
 
 if aba == "📈 Visão Geral":    
     silver_data = get_silver(engine, estado=estado, municipio=municipio)[0]

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 TIMEOUT = 120
 
 # Baixa uma quantidade n de dados do ano_mes da API
-def get_data(url:str, ano_mes:str, n:int = 100, skip:int = 0, tentativas: int = 3):
+def get_data(url:str, ano_mes:str, n:int = 100, tentativas: int = 3):
     # Parametros para a chamada
     params = {
         "@DataBase": f"'{ano_mes}'",
@@ -30,7 +30,7 @@ def get_data(url:str, ano_mes:str, n:int = 100, skip:int = 0, tentativas: int = 
         except requests.RequestException as e:
             logger.info(f"Tentativa {i + 1} falhou: {e}")
             time.sleep(5)
-    raise RuntimeError(f"Falha ao baixar {ano_mes} skip={skip}")
+    raise RuntimeError(f"Falha ao baixar {ano_mes}")
 
 
 # Retorna uma colecao dos dados a partir de um mes, contando n_meses para tras e trazendo n_dados_mes dados
@@ -50,7 +50,7 @@ def get_sequential_data(url:str, ano_mes:str, n_meses: int, n_dados_mes: int = 1
             # Quantidade de dados para pedir para a API -> API nao suporta mais de 10000 por vez
             n_pedir = min(10000, n_dados_mes)
             logger.info(f'Baixando {n_pedir} dados...')
-            _data = get_data(url, ano_mes=str(mes) ,n=n_pedir, skip=n_dados_baixados)
+            _data = get_data(url, ano_mes=str(mes) ,n=n_pedir)
 
             if not _data:
                 break
@@ -76,7 +76,7 @@ def get_sequential_and_upload(engine: Engine, url: str, ano_mes:str, n_meses: in
             # Quantidade de dados para pedir para a API -> API nao suporta mais de 10000 por vez
             n_pedir = min(10000, n_dados_mes)
             logger.info(f'Baixando {n_pedir} dados...')
-            data = get_data(url, ano_mes=str(mes) ,n=n_pedir, skip=n_dados_baixados)
+            data = get_data(url, ano_mes=str(mes) ,n=n_pedir)
 
             if not data:
                 break
