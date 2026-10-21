@@ -1,5 +1,6 @@
 from sqlalchemy import TextClause
-from sqlalchemy import create_engine, insert, text
+from sqlalchemy import create_engine, text
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine import Engine
 
 from src.models.models import Base, DadosAPI
@@ -20,7 +21,10 @@ def upload_sql(engine: Engine, data):
 
     data = prepare_data(data)
     with engine.begin() as conn:
-        conn.execute(insert(DadosAPI), data)
+        query = insert(DadosAPI).on_conflict_do_nothing(index_elements=[
+            "AnoMes", "Municipio", "Estado"
+        ])
+        conn.execute(query, data)
 
     logger.info(f"{len(data)} registro(s) salvo(s)")
 

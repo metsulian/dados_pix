@@ -1,3 +1,4 @@
+from sqlalchemy import UniqueConstraint
 from sqlalchemy import ForeignKey, BigInteger
 from datetime import date
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -7,6 +8,9 @@ class Base(DeclarativeBase):
 
 class DadosAPI(Base):
     __tablename__ = "DadosAPI"
+    __table_args__ = (
+        UniqueConstraint("AnoMes", "Municipio", "Estado", name="unique_dados"),
+    )
  
     id: Mapped[int] = mapped_column(primary_key=True) 
     AnoMes: Mapped[date]

@@ -14,5 +14,5 @@ logging.basicConfig(
 engine = _get_engine(DB_CONNECTION)
 
 clean_database(engine) #Limpa o Banco de Dados
-get_sequential_and_upload(engine, API_URL, '202606', n_meses=48, n_dados_mes=5500) #Baixa os dados da API e carrega na tabela bronze em armazenar em RAM
+get_sequential_and_upload(engine, API_URL, '202606', n_meses=48, n_dados_mes=10000) #Baixa os dados da API e carrega na tabela bronze em armazenar em RAM
 setup_tables(engine) #Inicializa tabelas silver e gold

@@ -12,28 +12,36 @@ st.set_page_config(layout="wide")
 st.title('📊 Estatísticas e Indicadores do Pix por Município')
 apply_theme()
 
-estados = [r["Estado"] for r in get_estados(engine)]
-estados.insert(0, "TODOS")
-estado = st.selectbox("Selecione um Estado:", estados)
-
-if estado == "TODOS":
-        municipios = ["TODOS"]
-else:
-    municipios = [r["Municipio"] for r in get_municipios(engine, estado)]
-    municipios.insert(0, "TODOS")
-municipio = st.selectbox("Selecione um Município:", municipios)
-
-meses = [r["AnoMes"] for r in get_ano_mes(engine)]
-meses.reverse()
-
 with st.sidebar:
-    st.text("Selecione:")
+    st.subheader("Selecione o Tipo de Análise:")
     aba = st.radio(
         "Seção",
         ["📈 Visão Geral", "🗺️ Análise Estadual", "🏙️ Análise Municipal"],
         horizontal=True,
         key="aba_ativa",
         label_visibility="collapsed",
+    )
+
+    meses = [r["AnoMes"] for r in get_ano_mes(engine)]
+    meses.reverse()
+
+    st.subheader("Análise Estadual e Municipal:")
+    estados = [r["Estado"] for r in get_estados(engine)]
+    estados.insert(0, "TODOS")
+    estado = st.selectbox("Selecione um Estado:", estados)
+
+    if estado == "TODOS":
+            municipios = ["TODOS"]
+    else:
+        municipios = [r["Municipio"] for r in get_municipios(engine, estado)]
+        municipios.insert(0, "TODOS")
+    municipio = st.selectbox("Selecione um Município:", municipios)
+
+    ano_mes = st.selectbox(
+        "Selecione um mês:", 
+        meses, 
+        key="mes_estado",
+        format_func=lambda d: d.strftime("%m/%Y")
     )
 
 if aba == "📈 Visão Geral":    
@@ -132,19 +140,13 @@ if aba == "📈 Visão Geral":
         make_top_bar(top_pj,  title=f"Top 10 Municípios por Valor Pago por PJ - {estado}", y_label="Valor Pago")
 
 elif aba == "🗺️ Análise Estadual":
-    ano_mes_estado = st.selectbox(
-        "Selecione um mês:", 
-        meses, 
-        key="mes_estado",
-        format_func=lambda d: d.strftime("%Y-%m")
-    )
     if estado == 'TODOS':
         st.warning("Selecione um estado!")
     else:
-        if not get_gold_estados(engine, estado, ano_mes_estado):
-            st.warning(f"Dados Não Obtidos para {estado} - {ano_mes_estado}")
+        if not get_gold_estados(engine, estado, ano_mes):
+            st.warning(f"Dados Não Obtidos para {estado} - {ano_mes}")
         else:
-            gold_estado_data = get_gold_estados(engine, estado, ano_mes_estado)[0]
+            gold_estado_data = get_gold_estados(engine, estado, ano_mes)[0]
             gold_estado_series = get_gold_estados_series(engine, estado)
             col3, col4 = st.columns(2)
 
@@ -161,9 +163,9 @@ elif aba == "🗺️ Análise Estadual":
                     st.metric("Valor Total Pago", "Não Obtido")
                 
                 if balanco_estado:
-                    st.metric(f"Balanço Estadual em {ano_mes_estado}", show_values(balanco_estado))
+                    st.metric(f"Balanço Estadual em {ano_mes}", show_values(balanco_estado))
                 else:
-                    st.metric(f"Balanço Estadual em {ano_mes_estado}", "Não Obtido")
+                    st.metric(f"Balanço Estadual em {ano_mes}", "Não Obtido")
 
                 if var_mes_estado:
                     st.metric("Variação do Balanço em Relação ao Último Mês", f"{(var_mes_estado*100):.2f}%")
@@ -185,9 +187,9 @@ elif aba == "🗺️ Análise Estadual":
                     st.metric("Porcentagem do Valor Pago PJ", "Não Obtida")
 
                 if share_nacional_estado:
-                    st.metric(f"Share Nacional em {ano_mes_estado}", f"{(share_nacional_estado*100):.2f}%")
+                    st.metric(f"Share Nacional em {ano_mes}", f"{(share_nacional_estado*100):.2f}%")
                 else:
-                    st.metric(f"Share Nacional em {ano_mes_estado}", "Não Obtido")
+                    st.metric(f"Share Nacional em {ano_mes}", "Não Obtido")
 
                 if var_ano_anterior_estado:
                     st.metric("Variação do Balanço em Relação ao Mesmo Mês do Ano Anterior", f"{(var_ano_anterior_estado*100):.2f}%")
@@ -204,18 +206,12 @@ elif aba == "🗺️ Análise Estadual":
                     } for r in gold_estado_series], f"Série Histórica Participação PJ - {estado}")
 
 elif aba == "🏙️ Análise Municipal":
-    ano_mes_municipio = st.selectbox(
-        "Selecione um mês:", 
-        meses, 
-        key="mes_municipio",
-        format_func=lambda d: d.strftime("%Y-%m")
-    )
     if estado == 'TODOS':
         st.warning("Selecione um estado!")
     if municipio == "TODOS":
         st.warning("Selecione um município!")
     else:
-        gold_municipio_data = get_gold_municipios(engine, estado, municipio, ano_mes_municipio)
+        gold_municipio_data = get_gold_municipios(engine, estado, municipio, ano_mes)
         gold_municipio_series = get_gold_municipios_series(engine, estado, municipio)
         if not gold_municipio_data:
             st.warning("Sem dados para este município neste mês.")
@@ -236,9 +232,9 @@ elif aba == "🏙️ Análise Municipal":
                     st.metric("Valor Total Pago", "Não Obtido")
 
                 if balanco_municipio:
-                    st.metric(f"Balanço Municipal em {ano_mes_municipio}", show_values(balanco_municipio))
+                    st.metric(f"Balanço Municipal em {ano_mes}", show_values(balanco_municipio))
                 else:
-                    st.metric(f"Balanço Municipal em {ano_mes_municipio}", "Não Obtido")
+                    st.metric(f"Balanço Municipal em {ano_mes}", "Não Obtido")
 
                 if var_mes_anterior_municipio:
                     st.metric("Variação do Balanço em Relação ao Último Mês", f"{(var_mes_anterior_municipio):.2f}%")
@@ -246,7 +242,7 @@ elif aba == "🏙️ Análise Municipal":
                     st.metric("Variação do Balanço em Relação ao Último Mês", "Não Obtida")
                 
                 make_series([
-                    {"Valor_Pagador_Total": r["VL_Pagador_Total_Municipio"],
+                    {"Valor Pagador Total": r["VL_Pagador_Total_Municipio"],
                     "Data": r["AnoMes"]
                     } for r in gold_municipio_series], f"Série Histórica Total Pago - {municipio}")
                 make_series([
@@ -265,14 +261,14 @@ elif aba == "🏙️ Análise Municipal":
                     st.metric("Porcentagem do Valor Pago PJ", "Não Obtida")
 
                 if share_nacional_municipio:
-                    st.metric(f"Share Nacional em {ano_mes_municipio}", f"{(share_nacional_municipio*100):.2f}%")
+                    st.metric(f"Share Nacional em {ano_mes}", f"{(share_nacional_municipio*100):.2f}%")
                 else:
-                    st.metric(f"Share Nacional em {ano_mes_municipio}", "Não Obtido")
+                    st.metric(f"Share Nacional em {ano_mes}", "Não Obtido")
 
                 if share_estadual_municipio:
-                    st.metric(f"Share Estadual em {ano_mes_municipio}", f"{(share_estadual_municipio*100):.2f}%")
+                    st.metric(f"Share Estadual em {ano_mes}", f"{(share_estadual_municipio*100):.2f}%")
                 else:
-                    st.metric(f"Share Estadual em {ano_mes_municipio}", "Não Obtido")
+                    st.metric(f"Share Estadual em {ano_mes}", "Não Obtido")
 
                 make_series([
                     {"Share Nacional": r["Share_Nacional_Municipio"],
